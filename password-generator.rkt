@@ -351,24 +351,17 @@
        ))
 
 (define input-text
-  (λ(l get-value)
+  (λ(l)
     (new text-field%
        [parent container-input]
        [label l]
        [style (list 'single 'vertical-label)]
-       [callback get-value]
+      
    )))
 
-(define include-textfield
-  (input-text "укључи карактере"
-  (λ(a n)
-    (all-available-password-chars (concat-items (string->list (send a get-value)))))))
+(define include-textfield (input-text "укључи карактepe"))
 
-(define exclude-textfield
-  (input-text "искљули карактере"
-  (λ(a n)
-    (all-available-password-chars (extract-items (string->list (send a get-value)))))
-  ))
+(define exclude-textfield (input-text "искљули карактере"))
 (define display-pass
   (new vertical-panel%
        [parent generate]))
@@ -402,20 +395,24 @@
        [label "генериши"]
        [callback
         (λ(a n)
-          (let* ([d (string->number (send combo-field get-string-selection))]
-                [extract-password (generate-chars d)])
+      
+         (let* ([d (string->number (send combo-field get-string-selection))]
+                ;included (if any)?
+                [includes (remove-duplicates(string->list (send include-textfield get-value)))]
+                [extract-password (generate-chars d)]
+                ;excluded (if any)?
+                [ALL ((extract-items
+                       (remove-duplicates(string->list (send exclude-textfield get-value))))
+                      (append all includes))])
           (send show-password set-label
-          (if
-           (equal? '() all)
+          (if (equal? '() ALL)
            "нисте изабрали ниједан карактер"
-           (if (regexp-match " " (extract-password all))
+           (if (regexp-match " " (extract-password ALL))
                "искључите space карактер/е из мануелног филтера"
-               (extract-password all))))
+               (extract-password ALL))))
           ))]
        [style (list 'border 'multi-line)]
        [min-width 100]))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;*************************************************;
 (send frame create-status-line)
 (send frame set-status-text "© Ξενία applications 2020")
