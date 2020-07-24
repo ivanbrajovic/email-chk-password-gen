@@ -375,7 +375,6 @@
        [min-width 400]
        [auto-resize #t]
        ))
-
 (define copy-button
   (new button%
        [callback
@@ -395,13 +394,11 @@
        [label "генериши"]
        [callback
         (λ(a n)
-      
          (let* ([d (string->number (send combo-field get-string-selection))]
                 ;included (if any)?
                 [includes (remove-duplicates(string->list (send include-textfield get-value)))]
                 [extract-password (generate-chars d)]
-                ;excluded (if any)?
-                [ALL ((extract-items
+                [ALL ((extract-items          ;excluded (if any)?
                        (remove-duplicates(string->list (send exclude-textfield get-value))))
                       (append all includes))])
           (send show-password set-label
